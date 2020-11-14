@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
+
+
+    public function __construct()
+    {
+        //$this->middleware('auth:api');
+        $this->middleware ('auth:api', ['except'=>'login']);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -17,19 +26,20 @@ class UsersController extends Controller
     public function index()   // visualizza elenco utenti
     {
         // visualizzazione dei dati di test da array
-
-        /* return ['name' => 'Moreno',
+     /*
+          return ['name' => 'Moreno',
                  'cognome' => 'Ghisellini',
                  'professione' => 'cazzone',
-                ];  */
+                ];    */
 
             //    primo metodo
        // return User::get();
 
                 // secondo metodo
+
             return response()->Json(
-                ['data'=> User::get(),
-                 'Success'
+                ['data'=> User::orderBy('id','DESC')->get(),
+                 'Success' => true
                 ]
             );
        }

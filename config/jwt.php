@@ -1,4 +1,4 @@
-php artisan jwt:secret<?php
+<?php
 
 /*
  * This file is part of jwt-auth.

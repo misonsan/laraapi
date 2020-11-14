@@ -19,14 +19,14 @@ class User extends Authenticatable  implements JWTSubject
      */
     // campi che possono essere passati dall'utente per aggiornare
     protected $fillable = [
-        'id',
+
         'name',
+        'lastname',
         'email',
         'password',
-        'lastname',
-        'phone',
-        'province',
         'fiscalcode',
+        'province',
+        'phone',
         'age',
     ];
    /**
@@ -52,21 +52,23 @@ class User extends Authenticatable  implements JWTSubject
     /*    metodi da personalizzare implementati da  JWTSubject */
 
 
+
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
+    //
+    // Return a key value array, containing any custom claims to be added to the JWT.
+    //
+    // @return array
+    //
     public function getJWTCustomClaims()
     {
-        /*  originariamente era return []; ma posso registrare nella payload
-            anche delle coppie chiave-> valore ceh voglio e che posso usare poi
-            nella front end  */
+        //  originariamente era return []; ma posso registrare nella payload
+        //    anche delle coppie chiave-> valore ceh voglio e che posso usare poi
+        //    nella front end
         return [
             'name' => $this->name,
             'email' => $this->email

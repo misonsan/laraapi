@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+
 
 class AuthController extends Controller
 {
@@ -14,7 +17,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'signup']]);
     }
 
     /**
@@ -26,12 +29,38 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
+
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['data'=> $credentials,'error' => 'Unauthorized1'], 401);
         }
 
         return $this->respondWithToken($token);
     }
+
+
+    public function signup()
+    {
+        $credentials = request(['name', 'email', 'password']);
+
+        $data = $credentials;
+        $credentials['password'] = Hash::make($credentials['password']);
+        $res = User::create($credentials);
+
+        if(!$res) {
+            return response()->json(['error' => 'errore in creazione utente'], 500);
+
+        }
+        // se creato utente faccio login per passare il token
+        if (! $token = auth()->login($res)) {
+            return response()->json(['error' => 'Unauthorized2'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+
+
+
 
     /**
      * Get the authenticated User.
@@ -77,7 +106,14 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            // salvo dei parametri aggiuntivi dell'utente
+            'user_name' => auth()->user()->name,
+            'email'  => auth()->user()->email,
+            'password' => auth()->user()->password
         ]);
     }
 }
+
+
+
