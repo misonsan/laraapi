@@ -38,6 +38,41 @@ class AuthController extends Controller
     }
 
 
+    public function getUserLong()   // funzione creata da Moreno per gestire la lettura diell'utente con i campi di cambio password
+    {
+        $credentials = request(['name', 'email', 'password']);
+
+
+        if (! $token = auth()->attempt($credentials)) {
+            return response()->json(['data'=> $credentials,'error' => 'Unauthorized1'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+
+    public function chgpwd()  {
+
+
+        $credentials = request(['newpassword']);
+
+        $data = $credentials;
+        $credentials['password'] = $credentials['newpassword'];       // Hash::make($credentials['newpassword']);
+        $res = User::save($credentials);
+
+        if(!$res) {
+            return response()->json(['error' => 'errore in modifica password  utente'], 500);
+
+        }
+        // se creato utente faccio login per passare il token
+        if (! $token = auth()->login($res)) {
+            return response()->json(['error' => 'Unauthorized3'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+
     public function signup()
     {
         $credentials = request(['name', 'email', 'password']);
@@ -57,7 +92,6 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
     }
-
 
 
 
