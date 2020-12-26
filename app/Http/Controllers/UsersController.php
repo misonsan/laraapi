@@ -14,7 +14,7 @@ class UsersController extends Controller
     public function __construct()
     {
         //$this->middleware('auth:api');
-        $this->middleware ('auth:api', ['except'=>['login', 'signup', 'chgpwd']]);
+        $this->middleware ('auth:api', ['except'=>['login', 'signup']]);
     }
 
 
@@ -114,7 +114,7 @@ class UsersController extends Controller
      */
     public function show($id)  // visualizzare un utente per chiave - usato
     {
-
+         
         try {
             return
                 response()->json(['data'=>User::FindOrFail($id)]) ;
@@ -128,6 +128,12 @@ class UsersController extends Controller
                 ]
             );
         }
+
+        
+
+
+
+
     }
 
     /**

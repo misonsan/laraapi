@@ -17,7 +17,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'signup']]);
+        $this->middleware('auth:api', ['except' => ['login', 'signup', 'chgpwd', 'getUserLong']]);
     }
 
     /**
@@ -42,21 +42,48 @@ class AuthController extends Controller
     {
         $credentials = request(['name', 'email', 'password']);
 
+        // Dump data
+       // dd($credentials);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['data'=> $credentials,'error' => 'Unauthorized1'], 401);
+            return response()->json(['data'=> $credentials,'error' => 'Unauthorized__2'], 401); // 401
         }
-
         return $this->respondWithToken($token);
+
+        /*
+        if(!Auth::attempt($credentials)) {
+            return response()->json(['data'=> $credentials,'error' => 'Unauthorized__2'], 401);
+        }  else {
+            return  true;
+        }*/
+
+
+
+
+/*
+        if ($token = auth()->attempt($credentials)) {
+            return response()->json(['data'=> $credentials,'error' => 'Unauthorized__2'], 401); // 401
+        }  */
+
+
+       // return $this->respondWithToken($token);
     }
 
 
     public function chgpwd()  {
 
 
-        $credentials = request(['newpassword']);
+        $credentials = request(['email', 'password']);
 
-        $data = $credentials;
+        $user = User::where('email', $credentials['email']);
+        if($user) {
+            $user->password = Hash::make($credentials['password']);
+            return true;
+        }
+        return false;
+
+
+        /*               buttarew
         $credentials['password'] = $credentials['newpassword'];       // Hash::make($credentials['newpassword']);
         $res = User::save($credentials);
 
@@ -69,7 +96,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized3'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token);  */
     }
 
 
